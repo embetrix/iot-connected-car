@@ -17,9 +17,11 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston,
 # MA 02111-1307 USA
 #
-
 from pubnub.pnconfiguration import PNConfiguration
 from pubnub.pubnub import PubNub
+from obd import OBDStatus
+import obd
+import time
 import settings as s
 
 pnconfig = PNConfiguration()
@@ -31,4 +33,18 @@ Data = [{'a': 1828292992, 'b': 727277272}]
  
 pubnub = PubNub(pnconfig)
 
-pubnub.publish().channel(s.channel).message(Data).sync()
+#obd.logger.setLevel(obd.logging.DEBUG)
+ 
+connection = obd.OBD(s.obdport) 
+
+
+while True:
+        cmd = obd.commands.RPM # select an OBD command (sensor)
+ 
+        response = connection.query(cmd, force=True) # send the command
+ 
+        print(response)
+
+        pubnub.publish().channel(s.channel).message(Data).sync()
+ 
+        time.sleep(1)

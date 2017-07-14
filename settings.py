@@ -18,6 +18,10 @@
 # MA 02111-1307 USA
 #
 
+#PubNub
 pubkey  = 'pub-c-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'
 subkey  = 'sub-c-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'
 channel = 'iot-car-channel'
+
+#OBD
+obdport = '/dev/pts/19'
