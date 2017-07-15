@@ -17,34 +17,39 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston,
 # MA 02111-1307 USA
 #
+import obd 
+import json
+import time 
+import sys
+import settings as s
 from pubnub.pnconfiguration import PNConfiguration
 from pubnub.pubnub import PubNub
 from obd import OBDStatus
-import obd
-import time
-import settings as s
+from obd import OBDCommand
 
 pnconfig = PNConfiguration()
-
 pnconfig.publish_key = s.pubkey
 pnconfig.subscribe_key = s.subkey
+pnconfig.ssl = True
 
-Data = [{'a': 1828292992, 'b': 727277272}]
+obd_data = '{"rpm": "na", "speed": "na" }'
+obd_json= json.loads(obd_data)
  
 pubnub = PubNub(pnconfig)
 
-#obd.logger.setLevel(obd.logging.DEBUG)
- 
-connection = obd.OBD(s.obdport) 
+connection = obd.OBD(s.obdport)
 
+if connection.status() != OBDStatus.CAR_CONNECTED:
+    sys.exit()
 
 while True:
-        cmd = obd.commands.RPM # select an OBD command (sensor)
+    rpm   = connection.query(obd.commands.RPM)
+    speed = connection.query(obd.commands.SPEED)
  
-        response = connection.query(cmd, force=True) # send the command
+    if not rpm.is_null() and not speed.is_null():
+        obd_json['rpm'] = rpm.value.magnitude
+        obd_json['speed'] = speed.value.magnitude
+        print obd_json
+        pubnub.publish().channel(s.channel).message(obd_json).sync()
  
-        print(response)
-
-        pubnub.publish().channel(s.channel).message(Data).sync()
- 
-        time.sleep(1)
+    time.sleep(1)
