@@ -32,32 +32,31 @@ pnconfig.publish_key = cfg.pubkey
 pnconfig.subscribe_key = cfg.subkey
 pnconfig.ssl = True
 
-obd_data = '{"rpm": "na", "speed": "na" }'
+obd_data = '{"rpm": "", "speed": "" }'
 obd_json= json.loads(obd_data)
  
 pubnub = PubNub(pnconfig)
 
-# a callback that prints every new value to the console
-def clkb_rpm(r):
+def callback_rpm(r):
     obd_json['rpm'] = r.value.magnitude
 
-
-# a callback that prints every new value to the console
-def clkb_speed(s):
+def callback_speed(s):
     obd_json['speed'] = s.value.magnitude
-    
-
+  
 connection = obd.Async(cfg.obdport)
-connection.watch(obd.commands.RPM, callback=clkb_rpm)
-connection.watch(obd.commands.SPEED, callback=clkb_speed)
+connection.watch(obd.commands.RPM, callback=callback_rpm)
+connection.watch(obd.commands.SPEED, callback=callback_speed)
 connection.start()
+
+if not connection.is_connected():
+    print 'ODB connection failed!'
+    sys.exit(1)
 
 try:
     while(True):
         pubnub.publish().channel(cfg.channel).message(obd_json).sync()
         time.sleep(0.5)
 
- 
 except Exception, e:
     print 'Error :' + str(e)
     sys.exit(0)
