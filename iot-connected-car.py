@@ -32,7 +32,7 @@ pnconfig.publish_key = cfg.pubkey
 pnconfig.subscribe_key = cfg.subkey
 pnconfig.ssl = True
 
-obd_data = '{"rpm": "", "speed": "" }'
+obd_data = '{"time": "", "rpm": "", "speed": "" }'
 obd_json= json.loads(obd_data)
  
 pubnub = PubNub(pnconfig)
@@ -54,6 +54,7 @@ if not connection.is_connected():
 
 try:
     while(True):
+        obd_json['time']=time.strftime("%Y-%m-%d %H:%M:%S")
         pubnub.publish().channel(cfg.channel).message(obd_json).sync()
         time.sleep(0.5)
 
