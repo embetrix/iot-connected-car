@@ -21,15 +21,15 @@ import obd
 import json
 import time 
 import sys
-import settings as s
+import configuration as cfg
 from pubnub.pnconfiguration import PNConfiguration
 from pubnub.pubnub import PubNub
 from obd import OBDStatus
 from obd import OBDCommand
 
 pnconfig = PNConfiguration()
-pnconfig.publish_key = s.pubkey
-pnconfig.subscribe_key = s.subkey
+pnconfig.publish_key = cfg.pubkey
+pnconfig.subscribe_key = cfg.subkey
 pnconfig.ssl = True
 
 obd_data = '{"rpm": "na", "speed": "na" }'
@@ -37,19 +37,27 @@ obd_json= json.loads(obd_data)
  
 pubnub = PubNub(pnconfig)
 
-connection = obd.OBD(s.obdport)
+# a callback that prints every new value to the console
+def clkb_rpm(r):
+    obd_json['rpm'] = r.value.magnitude
 
-if connection.status() != OBDStatus.CAR_CONNECTED:
-    sys.exit()
 
-while True:
-    rpm   = connection.query(obd.commands.RPM)
-    speed = connection.query(obd.commands.SPEED)
+# a callback that prints every new value to the console
+def clkb_speed(s):
+    obd_json['speed'] = s.value.magnitude
+    
+
+connection = obd.Async(cfg.obdport)
+connection.watch(obd.commands.RPM, callback=clkb_rpm)
+connection.watch(obd.commands.SPEED, callback=clkb_speed)
+connection.start()
+
+try:
+    while(True):
+        pubnub.publish().channel(cfg.channel).message(obd_json).sync()
+        time.sleep(0.5)
+
  
-    if not rpm.is_null() and not speed.is_null():
-        obd_json['rpm'] = rpm.value.magnitude
-        obd_json['speed'] = speed.value.magnitude
-        print obd_json
-        pubnub.publish().channel(s.channel).message(obd_json).sync()
- 
-    time.sleep(1)
+except Exception, e:
+    print 'Error :' + str(e)
+    sys.exit(0)
