@@ -1,0 +1,90 @@
+<html>
+  <head>
+    <script type="text/javascript" src="https://pubnub.github.io/eon/v/eon/1.1.0/eon.js"></script>
+    <link type="text/css" rel="stylesheet" href="https://pubnub.github.io/eon/v/eon/1.1.0/eon.css"/>
+  </head>
+  <body>
+    <div id="speed"></div>
+    <script>
+      var pubnub = new PubNub({
+          subscribeKey: 'sub-c-67699446-666e-11e7-8948-02ee2ddab7fe'
+      });
+      eon.chart({
+        pubnub: pubnub,
+        channels: ['iot-car-channel'],
+        history: true,
+        generate: {
+          bindto: '#speed',
+            data: {
+              type: 'gauge',
+            },
+          gauge: {
+            label:{
+               format: function(value, ratio){
+                   return value; //returning here the value, not in %
+                 },
+             },
+            width : 65,
+            min: 0,
+            max: 255
+          },
+         color: {
+         pattern: ['#60B044', '#F6C600','#FF0000'],
+         threshold: {
+            values: [120, 180, 200]
+            }
+          }
+      },
+        transform: function(message) {
+            var message = eon.c.flatten(message.eon);
+            return { eon: {
+                    'speed': message.speed
+                }
+           }
+        }
+      });
+    </script>
+
+    <div id="rpm"></div>
+    <script>
+      var pubnub = new PubNub({
+          subscribeKey: 'sub-c-67699446-666e-11e7-8948-02ee2ddab7fe'
+      });
+      eon.chart({
+        pubnub: pubnub,
+        channels: ['iot-car-channel'],
+        history: true,
+        generate: {
+          bindto: '#rpm',
+            data: {
+              type: 'gauge',
+            },
+          gauge: {
+            label:{
+               format: function(value, ratio){
+                   return value; //returning here the value, not in %
+                 },
+             },
+            width : 45,
+            min: 0,
+            max: 16
+          },
+         color: {
+         pattern: ['#60B044', '#F6C600','#FF0000'],
+         threshold: {
+            values: [4, 8, 14]
+            }
+          }
+      },
+        transform: function(message) {
+            var message = eon.c.flatten(message.eon);
+            return { eon: {
+                    'rpm': (message.rpm)/1000
+                }
+           }
+        }
+      });
+    </script>
+  </body>
+</html>
+
