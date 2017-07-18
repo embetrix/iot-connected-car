@@ -32,16 +32,16 @@ pnconfig.publish_key = cfg.pubkey
 pnconfig.subscribe_key = cfg.subkey
 pnconfig.ssl = True
 
-obd_data = '{"eon": {"rpm": "", "speed": "" }}'
+obd_data = '{"rpm": "", "speed": "" }'
 obd_json= json.loads(obd_data)
  
 pubnub = PubNub(pnconfig)
 
 def callback_rpm(r):
-    obd_json['eon']['rpm'] = r.value.magnitude
+    obd_json['rpm'] = r.value.magnitude
 
 def callback_speed(s):
-    obd_json['eon']['speed'] = s.value.magnitude
+    obd_json['speed'] = s.value.magnitude
   
 connection = obd.Async(cfg.obdport)
 connection.watch(obd.commands.RPM, callback=callback_rpm)
