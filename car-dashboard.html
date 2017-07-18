@@ -4,7 +4,7 @@
     <link type="text/css" rel="stylesheet" href="https://pubnub.github.io/eon/v/eon/1.1.0/eon.css"/>
   </head>
   <body>
-    <div id="speed"></div>
+    <div id="speed" style="width: 300px; float:left; height:500px; margin:100px"></div>
     <script>
       var pubnub = new PubNub({
           subscribeKey: 'sub-c-67699446-666e-11e7-8948-02ee2ddab7fe'
@@ -46,7 +46,7 @@
       });
     </script>
 
-    <div id="rpm"></div>
+    <div id="rpm" style="width: 300px; float:left; height:500px; margin:100px"></div>
     <script>
       var pubnub = new PubNub({
           subscribeKey: 'sub-c-67699446-666e-11e7-8948-02ee2ddab7fe'
@@ -63,7 +63,7 @@
           gauge: {
             label:{
                format: function(value, ratio){
-                   return value; //returning here the value, not in %
+                   return value.toFixed(2); //returning here the value, not in %
                  },
              },
             width : 45,
