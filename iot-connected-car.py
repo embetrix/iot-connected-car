@@ -32,7 +32,7 @@ pnconfig.publish_key = cfg.pubkey
 pnconfig.subscribe_key = cfg.subkey
 pnconfig.ssl = True
 
-obd_data = '{"rpm": "", "speed": "" }'
+obd_data = '{"rpm": 0, "speed": 0 }'
 obd_json= json.loads(obd_data)
  
 pubnub = PubNub(pnconfig)
