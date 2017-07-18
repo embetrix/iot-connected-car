@@ -37,9 +37,10 @@
           }
       },
         transform: function(message) {
-            var message = eon.c.flatten(message.eon);
+
+            var message = eon.c.flatten(message);
             return { eon: {
-                    'speed': message.speed
+                    'speed': (message.speed)
                 }
            }
         }
@@ -79,7 +80,7 @@
           }
       },
         transform: function(message) {
-            var message = eon.c.flatten(message.eon);
+            var message = eon.c.flatten(message);
             return { eon: {
                     'rpm': (message.rpm)/1000
                 }
