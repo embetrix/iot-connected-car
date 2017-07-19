@@ -4,6 +4,7 @@
     <link type="text/css" rel="stylesheet" href="https://pubnub.github.io/eon/v/eon/1.1.0/eon.css"/>
   </head>
   <body>
+    <div style="float:left;width:100%;"><b>Speed</b></p2></div>
     <div id="speed" style="float:left; width:20%;"></div>
     <script>
       var pubnub = new PubNub({
@@ -24,7 +25,6 @@
                    return value
                  },
              },
-            width : 65,
             min: 0,
             max: 255,
             units: 'km/h'
@@ -72,7 +72,7 @@
         }
       });
     </script>
-
+    <div style="float:left;width:100%;"><b>RPM</b></div>
     <div id="rpm" style="float:left; width:20%;"></div>
     <script>
       var pubnub = new PubNub({
@@ -93,7 +93,6 @@
                    return value.toFixed(2); //returning here the value with 2 digit after comma
                  },
              },
-            width : 65,
             min: 0,
             max: 8,
             units: 'rpm x1000'
@@ -138,6 +137,75 @@
         }
       });
     </script>
+    <div style="float:left;width:100%;"><b>Fuel consumption</b></div>
+    <div id="consumption" style="float:left; width:20%;"></div>
+    <script>
+      var pubnub = new PubNub({
+          subscribeKey: 'sub-c-67699446-666e-11e7-8948-02ee2ddab7fe'
+      });
+      eon.chart({
+        pubnub: pubnub,
+        channels: ['iot-car-channel'],
+        history: true,
+        generate: {
+          bindto: '#consumption',
+            data: {
+              type: 'gauge',
+            },
+          gauge: {
+            label:{
+               format: function(value, ratio){
+                   return value.toFixed(2); //returning here the value with 2 digit after comma
+                 },
+             },
+            min: 0,
+            max: 20,
+            units: 'L/100km'
+          },
+         color: {
+         pattern: ['#60B044', '#F6C600','#FF0000'],
+         threshold: {
+            values: [5, 8, 10]
+            }
+          }
+      },
+        transform: function(message) {
+            var message = eon.c.flatten(message);
+            var consumption = (3660*(message.maf))/(9069.90*(message.speed))
+            console.log(consumption);
+            return { eon: {
+                    'consumption': consumption
+                }
+           }
+        }
+      });
+    </script>
+    <div id="consumption-spline" style="float:left; width:70%;"></div>
+    <script>
+      var pubnub = new PubNub({
+          subscribeKey: 'sub-c-67699446-666e-11e7-8948-02ee2ddab7fe'
+      });
+      eon.chart({
+        pubnub: pubnub,
+        channels: ['iot-car-channel'],
+        history: true,
+        generate: {
+          bindto: '#consumption-spline',
+            data: {
+              type: 'spline',
+            },
+      },
+        transform: function(message) {
+            var message = eon.c.flatten(message);
+            var consumption = (3660*message.maf)/(9069.90*message.speed)
+            return { eon: {
+                    'consumption': consumption
+                }
+           }
+        }
+      });
+    </script>
+   <div style="float:left;width:100%;"><b>Engine Load</b></div>
    <div id="load" style="float:left; width:20%;"></div>
     <script>
       var pubnub = new PubNub({
