@@ -32,7 +32,7 @@ pnconfig.publish_key = cfg.pubkey
 pnconfig.subscribe_key = cfg.subkey
 pnconfig.ssl = True
 
-obd_data = '{"rpm": 0, "speed": 0, "fuel": 0, "load" : 0, "temp" : 0 }'
+obd_data = '{"rpm": 0, "speed": 0, "fuel": 0, "maf" : 0, "load" : 0, "temp" : 0 }'
 obd_json= json.loads(obd_data)
  
 pubnub = PubNub(pnconfig)
@@ -46,6 +46,9 @@ def callback_speed(s):
 def callback_fuel(f):
     obd_json['fuel']  = f.value.magnitude
 
+def callback_maf(m):
+    obd_json['maf']  = m.value.magnitude
+
 def callback_load(l):
     obd_json['load']  = l.value.magnitude
 
@@ -56,6 +59,7 @@ connection = obd.Async(cfg.obdport)
 connection.watch(obd.commands.RPM, callback=callback_rpm)
 connection.watch(obd.commands.SPEED, callback=callback_speed)
 connection.watch(obd.commands.FUEL_LEVEL, callback=callback_fuel)
+connection.watch(obd.commands.MAF, callback=callback_maf)
 connection.watch(obd.commands.ENGINE_LOAD, callback=callback_load)
 connection.watch(obd.commands.COOLANT_TEMP, callback=callback_temp)
 connection.start()
