@@ -71,7 +71,7 @@ if not connection.is_connected():
 try:
     while(True):
         pubnub.publish().channel(cfg.channel).message(obd_json).sync()
-        time.sleep(0.5)
+        time.sleep(cfg.period)
 
 except Exception, e:
     print 'Error :' + str(e)

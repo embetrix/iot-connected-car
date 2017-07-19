@@ -23,5 +23,8 @@ pubkey  = 'pub-c-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'
 subkey  = 'sub-c-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'
 channel = 'iot-car-channel'
 
-#OBD
+#Sampling period
+period = 1.5
+
+#OBD Port
 obdport = '/dev/pts/19'
